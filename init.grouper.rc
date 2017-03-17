@@ -84,6 +84,7 @@ on boot
 # didim
     chown system system /sys/class/graphics/fb0/device/smartdimmer/enable
     chown system system /sys/class/graphics/fb0/device/smartdimmer/aggressiveness
+    chown system system /sys/class/graphics/fb0/device/smartdimmer/phase_in_adjustments
 
 # power
     chown system system /sys/kernel/tegra_cap/core_cap_level
@@ -266,9 +267,9 @@ on boot
     chown system system /sys/devices/system/cpu/cpufreq/interactive/max_boost
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/max_boost
     chown system system /sys/devices/system/cpu/cpufreq/interactive/sustain_load
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/sustain_load
     chown system system /sys/devices/system/cpu/cpufreq/interactive/min_core_keep
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/min_core_keep
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/sustain_load
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
@@ -308,7 +309,7 @@ on boot
 
 # config swap
     write /proc/sys/vm/page-cluster 0
-    write /proc/sys/vm/swappiness 100
+    write /proc/sys/vm/swappiness 80
 
 # some additional performance tweaks (to be tested)
 	setprop dalvik.vm.heapgrowthlimit 128m
@@ -317,6 +318,7 @@ on boot
 	write /sys/module/lowmemorykiller/parameters/minfree "8192,10240,12288,14336,16384,20480"
 	write /sys/module/lowmemorykiller/parameters/cost 48
 	write /proc/sys/vm/highmem_is_dirtyable 1
+	write /sys/block/mmcblk0/queue/scheduler cfq
 	write /sys/block/mmcblk0/queue/nr_requests 512
 	write /sys/block/mmcblk0/queue/add_random 0
 	write /sys/block/mmcblk0/queue/rq_affinity 2
@@ -329,9 +331,14 @@ on boot
 	write /sys/devices/tegradc.0/smartdimmer/enable 0
 	write /sys/devices/host1x/gr3d/enable_3d_scaling 1
 
+# stop ril-daemon if this is a wifi-only device
+on property:ro.carrier=wifi-only
+    stop ril-daemon
+
 service wpa_supplicant /system/bin/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
     -I/system/etc/wifi/wpa_supplicant_overlay.conf \
+    -O/data/misc/wifi/sockets \
     -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
     #   we will start as root and wpa_supplicant will switch to user wifi
     #   after setting up the capabilities required for WEXT
@@ -411,7 +418,6 @@ service set_hwui_params /system/bin/set_hwui_params.sh
     user root
     group root
     oneshot
-
 
 # bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys
 service bugreport /system/bin/dumpstate -d -p -B \
