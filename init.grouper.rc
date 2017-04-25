@@ -449,10 +449,9 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
 service set_hwui_params /system/bin/set_hwui_params.sh
 
 #Sensor: load calibration files.
-    service sensors-config /system/bin/sensors-config
+service sensors-calib /system/bin/sensors-load-calibration.sh
     class main
     user root
-    group root
     oneshot
 
 #Sensor load calibration files end
@@ -476,10 +475,11 @@ service bugreport /system/bin/dumpstate -d -p -B \
     keycodes 115 114
 
 # Start GPS daemon
-service gps-daemon /system/bin/glgps -c /system/etc/gps/gpsconfig.xml
-  user gps
-  group system
-  class late_start
+service gpsd /vendor/bin/gpsd -c /system/etc/gps.xml
+    class main
+    socket gps seqpacket 0660 gps system
+    user gps
+    group system wakelock inet sdcard_rw
 
 # Recovery daemon: configure MSC partition
 service recoveryd /system/bin/recoveryd /dev/block/platform/sdhci-tegra.3/by-name/MSC
