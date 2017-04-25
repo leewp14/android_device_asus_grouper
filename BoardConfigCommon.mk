@@ -86,14 +86,26 @@ ifneq ($(HAVE_NVIDIA_PROP_SRC),false)
 -include vendor/nvidia/build/definitions.mk
 endif
 
+# Override healthd HAL
+BOARD_HAL_STATIC_LIBRARIES := libdumpstate.grouper libhealthd.tegra3
+
 # Avoid the generation of ldrcc instructions
 NEED_WORKAROUND_CORTEX_A9_745320 := true
 
 BOARD_USES_GROUPER_MODULES := true
+
+# Use clang platform builds
+USE_CLANG_PLATFORM_BUILD := true
+
+BOARD_KERNEL_CMDLINE := androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME)
 
 TARGET_KERNEL_SOURCE := kernel/asus/grouper
 TARGET_KERNEL_CONFIG := lineageos_grouper_defconfig
 
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 
+TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
 BOARD_SEPOLICY_DIRS += device/asus/grouper/sepolicy
+
+TARGET_RELEASETOOLS_EXTENSIONS := device/asus/grouper
+

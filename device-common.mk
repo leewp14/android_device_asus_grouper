@@ -25,6 +25,8 @@ PRODUCT_AAPT_PREF_CONFIG := hdpi
 # A list of dpis to select prebuilt apk, in precedence order.
 PRODUCT_AAPT_PREBUILT_DPI := hdpi
 
+TARGET_HAS_LEGACY_CAMERA_HAL1 := true
+
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=15 \
@@ -32,9 +34,19 @@ PRODUCT_PROPERTY_OVERRIDES := \
     persist.sys.media.legacy-drm=true \
     drm.service.enabled=true
 
+# disable Captive portal check
+ PRODUCT_PROPERTY_OVERRIDES += \
+    ro.disable_captive_portal=1
+
 # libhwui flags
 PRODUCT_PROPERTY_OVERRIDES += \
     debug.hwui.render_dirty_regions=false
+
+# ART
+PRODUCT_PROPERTY_OVERRIDES += \
+               dalvik.vm.dex2oat-flags=--no-watch-dog \
+               dalvik.vm.dex2oat-swap=false \
+               ro.sys.fw.dex2oat_thread_count=5
 
 # Set default USB interface
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
@@ -49,7 +61,14 @@ include frameworks/native/build/tablet-7in-hdpi-1024-dalvik-heap.mk
 PRODUCT_COPY_FILES += \
     device/asus/grouper/ueventd.grouper.rc:root/ueventd.grouper.rc \
     device/asus/grouper/init.grouper.usb.rc:root/init.grouper.usb.rc \
-    device/asus/grouper/gps.conf:system/etc/gps.conf
+    device/asus/grouper/gps.conf:system/etc/gps.conf \
+    device/asus/grouper/gps/gps.xml:system/etc/gps.xml \
+    device/asus/grouper/touch_fw_update.sh:system/bin/touch_fw_update.sh \
+    device/asus/grouper/sensors-load-calibration.sh:system/bin/sensors-load-calibration.sh \
+    device/asus/grouper/set_hwui_params.sh:system/bin/set_hwui_params.sh
+
+PRODUCT_PACKAGES += \
+    libnvossh
 
 ifneq ($(TARGET_PREBUILT_WIFI_MODULE),)
 PRODUCT_COPY_FILES += \
@@ -77,7 +96,8 @@ PRODUCT_COPY_FILES += \
     device/asus/grouper/sensor00fn11.idc:system/usr/idc/sensor00fn11.idc \
     device/asus/grouper/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl
 
-PRODUCT_PACKAGES := \
+PRODUCT_PACKAGES += \
+    libgpsd-compat \
     libwpa_client \
     hostapd \
     dhcpcd.conf \
@@ -85,6 +105,7 @@ PRODUCT_PACKAGES := \
     wpa_supplicant.conf
 
 PRODUCT_PACKAGES += \
+    libhealthd.tegra3 \
     lights.grouper \
     audio.primary.grouper \
     power.grouper \
@@ -92,6 +113,7 @@ PRODUCT_PACKAGES += \
     audio.usb.default \
     audio.r_submix.default \
     librs_jni \
+    libemoji \
     l2ping \
     hcitool \
     bttest \
@@ -102,7 +124,7 @@ PRODUCT_PACKAGES += \
 
 # NFC packages
 PRODUCT_PACKAGES += \
-    nfc.grouper \
+    libpn544_fw \
     Nfc \
     Tag
 
@@ -114,6 +136,9 @@ PRODUCT_PACKAGES += \
     setup_fs
 
 PRODUCT_CHARACTERISTICS := tablet,nosdcard
+
+# we have enough storage space to hold precise GC data
+PRODUCT_TAGS += dalvik.gc.type-precise
 
 # media config xml file
 PRODUCT_COPY_FILES += \
@@ -137,6 +162,18 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/com.nxp.mifare.xml:system/etc/permissions/com.nxp.mifare.xml \
     frameworks/native/data/etc/android.hardware.nfc.xml:system/etc/permissions/android.hardware.nfc.xml
+
+# NFCEE access control
+ifeq ($(TARGET_BUILD_VARIANT),user)
+    NFCEE_ACCESS_PATH := device/asus/grouper/nfcee_access.xml
+else
+    NFCEE_ACCESS_PATH := device/asus/grouper/nfcee_access_debug.xml
+endif
+PRODUCT_COPY_FILES += \
+    $(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml
+
+PRODUCT_PACKAGES += \
+    libstagefrighthw
 
 WIFI_BAND := 802_11_BG
  $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4330/device-bcm.mk)
