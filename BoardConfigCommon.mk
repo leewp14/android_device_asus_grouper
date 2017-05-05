@@ -97,7 +97,7 @@ BOARD_USES_GROUPER_MODULES := true
 # Use clang platform builds
 USE_CLANG_PLATFORM_BUILD := true
 
-BOARD_KERNEL_CMDLINE := androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME)
+BOARD_KERNEL_CMDLINE := androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME) androidboot.selinux=permissive
 KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-4.8/bin
 TARGET_KERNEL_ARCH := arm
 TARGET_KERNEL_HEADER_ARCH := arm
