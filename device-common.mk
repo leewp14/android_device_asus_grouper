@@ -67,9 +67,6 @@ PRODUCT_COPY_FILES += \
     device/asus/grouper/sensors-load-calibration.sh:system/bin/sensors-load-calibration.sh \
     device/asus/grouper/set_hwui_params.sh:system/bin/set_hwui_params.sh
 
-PRODUCT_PACKAGES += \
-    libnvossh
-
 ifneq ($(TARGET_PREBUILT_WIFI_MODULE),)
 PRODUCT_COPY_FILES += \
     $(TARGET_PREBUILT_WIFI_MODULE):system/lib/modules/bcm4329.ko
@@ -88,7 +85,6 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
-    frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
     frameworks/native/data/etc/com.nxp.mifare.xml:system/etc/permissions/com.nxp.mifare.xml \
     frameworks/native/data/etc/android.hardware.ethernet.xml:system/etc/permissions/android.hardware.ethernet.xml
 
@@ -96,8 +92,7 @@ PRODUCT_COPY_FILES += \
     device/asus/grouper/elan-touchscreen.idc:system/usr/idc/elan-touchscreen.idc \
     device/asus/grouper/raydium_ts.idc:system/usr/idc/raydium_ts.idc \
     device/asus/grouper/sensor00fn11.idc:system/usr/idc/sensor00fn11.idc \
-    device/asus/grouper/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
-    prebuilts/ndk/current/sources/cxx-stl/stlport/libs/armeabi/libstlport_shared.so:system/lib/libstlport.so
+    device/asus/grouper/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl
 
 PRODUCT_PACKAGES += \
     libgpsd-compat \
@@ -193,7 +188,7 @@ PRODUCT_PACKAGES += \
     libstagefrighthw
 
 WIFI_BAND := 802_11_BG
- $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4330/device-bcm.mk)
+$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4330/device-bcm.mk)
 
 # inherit from the non-open-source side
 $(call inherit-product, vendor/asus/grouper/asus-vendor.mk)
@@ -201,4 +196,4 @@ $(call inherit-product, vendor/broadcom/grouper/broadcom-vendor.mk)
 $(call inherit-product, vendor/elan/grouper/elan-vendor.mk)
 $(call inherit-product, vendor/invensense/grouper/invensense-vendor.mk)
 $(call inherit-product, vendor/nvidia/grouper/nvidia-vendor.mk)
-$(call inherit-product-if-exists, vendor/widevine/grouper/widevine-vendor.mk)
+$(call inherit-product-if-exists, vendor/widevine/arm-generic/widevine-vendor.mk)
