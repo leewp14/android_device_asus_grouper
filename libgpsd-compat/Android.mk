@@ -1,4 +1,5 @@
-# Copyright (C) 2011 The Android Open Source Project
+# Copyright (C) 2015 The Android Open Source Project
+# Written by Dmitry Grinberg
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,33 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifeq ($(TARGET_ARCH),arm)
-ifeq ($(TARGET_DEVICE),grouper)
-
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := keystore.grouper
-
-LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
-
-LOCAL_SRC_FILES := \
-	keymaster_grouper.cpp
-
-LOCAL_C_INCLUDES := \
-	libcore/include \
-	$(LOCAL_PATH)/../security/tf_sdk/include
-
-LOCAL_CFLAGS := -fvisibility=hidden -Wall -Werror
-
-LOCAL_SHARED_LIBRARIES := libcutils liblog libcrypto libtf_crypto_sst
-
+LOCAL_SHARED_LIBRARIES := liblog libhardware_legacy libgui libbinder libutils
+LOCAL_SRC_FILES := libgpsd-compat.c
+LOCAL_MODULE := libgpsd-compat
 LOCAL_MODULE_TAGS := optional
 
-LOCAL_MODULE_OWNER := google
-
 include $(BUILD_SHARED_LIBRARY)
-
-endif
-endif

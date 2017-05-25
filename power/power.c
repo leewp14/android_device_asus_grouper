@@ -194,8 +194,8 @@ static void grouper_power_init( __attribute__((unused)) struct power_module *mod
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor", "0");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost", "1");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy", "1");
-    sysfs_write(INTERACTIVE_KEEP_MIN_CPU, "4");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/hispeed_freq", "860000");
+    sysfs_write(INTERACTIVE_KEEP_MIN_CPU, "4");
     uevent_init();
 }
 
@@ -204,19 +204,19 @@ static void grouper_power_set_interactive(__attribute__((unused)) struct power_m
 {
 	if (on) {
 		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load", "50");
-		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/core_lock_period", "300000");
+		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/core_lock_period", "3000000");
 		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/core_lock_count", "2");
 		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost", "1");
-                sysfs_write(INTERACTIVE_KEEP_MIN_CPU, "2");
-    		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy", "1");
+		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy", "1");
+    		sysfs_write(INTERACTIVE_KEEP_MIN_CPU, "2");
 	}
 	else {
 		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load", "85");
 		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/core_lock_period", "200000");
 		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/core_lock_count", "0");
 		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost", "0");
-                sysfs_write(INTERACTIVE_KEEP_MIN_CPU, "0");
-    		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy", "0");
+		sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy", "0");
+    		sysfs_write(INTERACTIVE_KEEP_MIN_CPU, "0");
 	}
 }
 

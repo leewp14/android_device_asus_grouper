@@ -2,6 +2,7 @@
 ## and revert to the base sysfs type.
 allow init sysfs:file write;
 
+allow init debugfs:dir mounton;
 allow init logd:dir { getattr };
 allow init logd:dir { read open };
 
@@ -9,6 +10,7 @@ allow init sysfs_firmware_writable:file w_file_perms;
 
 allow init sysfs_devices_tegradc:lnk_file { read };
 
+allow init debugfs:file w_file_perms;
 allow init tmpfs:lnk_file create_file_perms;
 
 # Allow mounting /per

@@ -4,10 +4,21 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 on init
-    symlink /sdcard /storage/sdcard0
-    # See storage config details at http://source.android.com/tech/storage/
-    mkdir /mnt/shell/emulated 0700 shell shell
-    mkdir /storage/emulated 0555 root root
+#    # See storage config details at http://source.android.com/tech/storage/
+#    # By default, primary storage is physical
+#    setprop ro.vold.primary_physical 
+#
+#    mkdir /mnt/shell/emulated 0700 shell shell
+#    mkdir /storage/emulated 0555 root root
+#
+#    # Create mountpoint so Dalvik can mark as slave in zygotes.
+#    mount tmpfs tmpfs /storage/emulated mode=0050,uid=0,gid=1028
+#
+#    # Support legacy paths
+#    symlink /storage/emulated/legacy /sdcard
+#    symlink /storage/emulated/legacy /mnt/sdcard
+#    symlink /storage/emulated/legacy /storage/sdcard0
+#    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
     export EXTERNAL_STORAGE /storage/emulated/legacy
     export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
@@ -60,7 +71,7 @@ on post-fs-data
     # gps
     mkdir /data/gps
     chown gps system /data/gps
-    chmod 770 /data/gps
+    chmod 1770 /data/gps
     write /sys/class/gpio/export 162
     write /sys/class/gpio/gpio162/value 0
     write /sys/class/gpio/gpio162/direction out
@@ -263,9 +274,6 @@ on boot
 # Power management settings
     write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 50
     write /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay 20000
-    write /sys/module/cpu_tegra3/parameters/no_lp 0
-    #write /sys/module/tegra3_emc/parameters/emc_enable 0
-    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 1000000
     write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
     write /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq 860000
     write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
@@ -273,7 +281,11 @@ on boot
     write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 100000
     write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
     write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 50000
+    write /sys/module/cpu_tegra3/parameters/no_lp 0
     write /sys/module/cpu_tegra3/parameters/auto_hotplug 1
+    write /sys/module/cpuidle/parameters/lp2_in_idle 0
+    #write /sys/module/tegra3_emc/parameters/emc_enable 0
+    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 1000000
     #write /sys/module/cpuidle_t3/parameters/lp2_0_in_idle 0
     write /sys/module/cpuidle/parameters/lp2_in_idle 0
 
@@ -353,24 +365,24 @@ on boot
 
 
 # some additional performance tweaks (to be tested)
-       setprop dalvik.vm.heapgrowthlimit 128m
-       setprop dalvik.vm.heapsize 174m
-       write /sys/module/lowmemorykiller/parameters/adj "0,1,2,4,7,15"
-       write /sys/module/lowmemorykiller/parameters/minfree "8192,10240,12288,14336,16384,20480"
-       write /sys/module/lowmemorykiller/parameters/cost 48
-       write /proc/sys/vm/highmem_is_dirtyable 1
-       write /sys/block/mmcblk0/queue/scheduler cfq
-       write /sys/block/mmcblk0/queue/nr_requests 512
-       write /sys/block/mmcblk0/queue/add_random 0
-       write /sys/block/mmcblk0/queue/rq_affinity 2
-       write /sys/block/mmcblk0/queue/iosched/slice_idle 0
-       write /sys/block/mmcblk0/queue/iosched/group_idle 10
-       write /sys/block/mmcblk0/queue/iosched/back_seek_penalty 1
-       write /sys/block/mmcblk0/queue/iosched/quantum 16
-       write /sys/block/mmcblk0/queue/iosched/slice_async_rq 4
-       write /sys/block/mmcblk0/queue/iosched/back_seek_max 2147483647
-       write /sys/devices/tegradc.0/smartdimmer/enable 0
-       write /sys/devices/host1x/gr3d/enable_3d_scaling 1
+	setprop dalvik.vm.heapgrowthlimit 128m
+	setprop dalvik.vm.heapsize 174m
+	write /sys/module/lowmemorykiller/parameters/adj "0,1,2,4,7,15"
+	write /sys/module/lowmemorykiller/parameters/minfree "8192,10240,12288,14336,16384,20480"
+	write /sys/module/lowmemorykiller/parameters/cost 48
+	write /proc/sys/vm/highmem_is_dirtyable 1
+	write /sys/block/mmcblk0/queue/scheduler cfq
+	write /sys/block/mmcblk0/queue/nr_requests 512
+	write /sys/block/mmcblk0/queue/add_random 0
+	write /sys/block/mmcblk0/queue/rq_affinity 2
+	write /sys/block/mmcblk0/queue/iosched/slice_idle 0
+	write /sys/block/mmcblk0/queue/iosched/group_idle 10
+	write /sys/block/mmcblk0/queue/iosched/back_seek_penalty 1
+	write /sys/block/mmcblk0/queue/iosched/quantum 16
+	write /sys/block/mmcblk0/queue/iosched/slice_async_rq 4
+	write /sys/block/mmcblk0/queue/iosched/back_seek_max 2147483647
+	write /sys/devices/tegradc.0/smartdimmer/enable 0
+	write /sys/devices/host1x/gr3d/enable_3d_scaling 1
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only
@@ -447,14 +459,10 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
 
 # set hwui properties depending on the screen resolution and the memory size
 service set_hwui_params /system/bin/set_hwui_params.sh
-
-#Sensor: load calibration files.
-service sensors-calib /system/bin/sensors-load-calibration.sh
     class main
     user root
     oneshot
 
-#Sensor load calibration files end
 
 # virtual sdcard daemon running as media_rw (1023)
 service sdcard /system/bin/sdcard -u 1023 -g 1023 -t 4 -l /data/media /mnt/shell/emulated
@@ -496,7 +504,7 @@ on property:ro.build.type=userdebug
     start adbd
 
 # start tf_daemon service
-service tf_daemon /system/bin/tf_daemon -storageDir /data/tf -d
+service tf_daemon /vendor/bin/tf_daemon -storageDir /data/tf -d
     class main
     user root
     group shell
@@ -505,16 +513,14 @@ service tf_daemon /system/bin/tf_daemon -storageDir /data/tf -d
 on property:init.svc.tf_daemon=restarting
     mkdir /data/tf
 
-# create filesystems if necessary
-service setup_fs /system/bin/setup_fs \
-        /dev/block/platform/sdhci-tegra.3/by-name/UDA \
-        /dev/block/platform/sdhci-tegra.3/by-name/CAC
-    class core
+service touch_fw_update /system/bin/touch_fw_update.sh
+    class main
+    disabled
     user root
     group root
     oneshot
 
-service touch_fw_update /system/bin/sh -c "echo /system/etc/firmware/touch_fw.ekt > /sys/bus/i2c/drivers/elan-ktf3k/1-0010/update_fw"
+service sensors-calib /system/bin/sensors-load-calibration.sh
     class main
     disabled
     user root
