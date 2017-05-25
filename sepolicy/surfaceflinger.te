@@ -11,4 +11,4 @@ allow surfaceflinger sysfs_module_nvhost:file r_file_perms;
 # and revert to the base sysfs type.
 allow surfaceflinger sysfs:file write;
 allow surfaceflinger sysfs:file w_file_perms;
-# allow surfaceflinger debugfs:file w_file_perms;
+allow surfaceflinger debugfs:file w_file_perms;

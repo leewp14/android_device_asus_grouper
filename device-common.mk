@@ -105,6 +105,10 @@ PRODUCT_PACKAGES += \
     wpa_supplicant \
     wpa_supplicant.conf
 
+#help GL work in M
+PRODUCT_PACKAGES += \
+    libdgv1
+
 PRODUCT_PACKAGES += \
     libhealthd.tegra3 \
     lights.grouper \
@@ -189,6 +193,8 @@ PRODUCT_PACKAGES += \
     libstagefrighthw
 
 WIFI_BAND := 802_11_BG
+PRODUCT_DEFAULT_WIFI_CHANNELS := 13
+
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4330/device-bcm.mk)
 
 # inherit from the non-open-source side
