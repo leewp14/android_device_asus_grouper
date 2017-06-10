@@ -30,23 +30,6 @@
 /sys/devices/platform/bcm4330_rfkill/rfkill/rfkill0/state   --  u:object_r:sysfs_bluetooth_writable:s0
 /sys/devices/platform/bcm4330_rfkill/rfkill/rfkill0/type    --  u:object_r:sysfs_bluetooth_writable:s0
 
-/sys/class/gpio/gpio162/value          u:object_r:sysfs_firmware_writable:s0
-/sys/class/gpio/gpio162/direction      u:object_r:sysfs_firmware_writable:s0
-
-/dev/block/mmcblk0                             u:object_r:root_block_device:s0
-/dev/block/platform/sdhci-tegra.3/by-name/UDA  u:object_r:userdata_block_device:s0
-/dev/block/platform/sdhci-tegra.3/by-name/CAC  u:object_r:cache_block_device:s0
-/dev/block/platform/sdhci-tegra.3/by-name/LNX  u:object_r:boot_block_device:s0
-/dev/block/platform/sdhci-tegra.3/by-name/SOS  u:object_r:recovery_block_device:s0
-/dev/block/platform/sdhci-tegra.3/by-name/APP  u:object_r:system_block_device:s0
-/dev/block/platform/sdhci-tegra.3/by-name/MDA  u:object_r:metadata_block_device:s0
-/dev/block/zram0                               u:object_r:swap_block_device:s0
-
-/system/bin/setup_fs   --      u:object_r:setupfs_exec:s0
-/system/bin/touch_fw_update.sh u:object_r:touchfw_exec:s0
-/system/bin/gps_daemon.sh      u:object_r:glgps_exec:s0
-/system/vendor/bin/tf_daemon   u:object_r:tee_exec:s0
-
 /sys/module/nvhost/parameters/register_sets    u:object_r:sysfs_module_nvhost:s0
 /sys/module/fuse/parameters/tegra_chip_id      u:object_r:sysfs_module_fuse:s0
 /sys/module/fuse/parameters/tegra_chip_rev     u:object_r:sysfs_module_fuse:s0
@@ -70,6 +53,3 @@
 /system/bin/gps_daemon.sh	u:object_r:glgps_exec:s0
 /system/vendor/bin/tf_daemon	u:object_r:tee_exec:s0
 
-/sys/module/nvhost/parameters/register_sets	u:object_r:sysfs_module_nvhost:s0
-/sys/module/fuse/parameters/tegra_chip_id	u:object_r:sysfs_module_fuse:s0
-/sys/module/fuse/parameters/tegra_chip_rev	u:object_r:sysfs_module_fuse:s0
