@@ -1,3 +1,5 @@
 # Read access to pseudo filesystems (for /proc/uptime).
 r_dir_file(bootstat, proc)
+allow bootstat rootfs:lnk_file getattr;
+
 
