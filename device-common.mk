@@ -57,14 +57,27 @@ PRODUCT_COPY_FILES += \
     device/asus/grouper/touchscreen/elan-touchscreen.idc:system/usr/idc/elan-touchscreen.idc \
     device/asus/grouper/keylayout/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl
 
+PRODUCT_PROPERTY_OVERRIDES += \
+	persist.media.treble_omx=false
+
 # GPS
 PRODUCT_COPY_FILES += \
-    device/asus/grouper/gps/gps.conf:system/etc/gps.conf \
-    device/asus/grouper/gps/gps.xml:system/etc/gps.xml
+    device/asus/grouper/gps/gps.conf:$(TARGET_COPY_OUT_VENDOR)/etc/gps.conf \
+    device/asus/grouper/gps/gps.xml:$(TARGET_COPY_OUT_VENDOR)/etc/gps.xml
+
+PRODUCT_PACKAGES += \
+	libdmitry
 
 PRODUCT_PACKAGES += \
     libgpsd-compat \
     libstlport
+
+# DRM
+PRODUCT_PROPERTY_OVERRIDES += \
+ 	drm.service.enabled=true
+ 
+PRODUCT_PACKAGES += \
+	android.hardware.drm@1.0-impl
 
 # Wi-Fi
 PRODUCT_PACKAGES += \
@@ -86,12 +99,17 @@ PRODUCT_PACKAGES += \
 
 # Lights
 PRODUCT_PACKAGES += \
+    lights.grouper \
     android.hardware.light@2.0-impl \
-    lights.grouper
+    android.hardware.light@2.0-service
+
+# USB
+PRODUCT_PACKAGES += \
+	android.hardware.usb@1.0-service
 
 # Sensors
-PRODUCT_COPY_FILES += \
-    device/asus/grouper/sensors/sensors-load-calibration.sh:system/bin/sensors-load-calibration.sh
+#PRODUCT_COPY_FILES += \
+#    device/asus/grouper/sensors/sensors-load-calibration.sh:system/bin/sensors-load-calibration.sh
 
 # Sensors HAL
 PRODUCT_PACKAGES += \
@@ -101,9 +119,13 @@ PRODUCT_PACKAGES += \
     libmllite \
     libmplmpu
 
+PRODUCT_COPY_FILES += \
+    device/asus/grouper/configs/sensors/_hals.conf:system/vendor/etc/sensors/_hals.conf
+
 # Audio
 PRODUCT_PACKAGES += \
     android.hardware.audio@2.0-impl \
+    android.hardware.audio@2.0-service \
     android.hardware.audio.effect@2.0-impl \
     audio.primary.grouper \
     audio.a2dp.default \
@@ -112,11 +134,13 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
     device/asus/grouper/audio/audio_policy.conf:system/etc/audio_policy.conf \
+    $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_configuration.xml \
     device/asus/grouper/audio/mixer_paths.xml:system/etc/mixer_paths.xml
 
 # NFC
 PRODUCT_PACKAGES += \
     nfc.grouper \
+    android.hardware.nfc@1.0-impl \
     libpn544_fw \
     NfcNxp \
     Tag
@@ -137,10 +161,11 @@ PRODUCT_COPY_FILES += \
     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
-    device/asus/grouper/media/media_profiles.xml:system/etc/media_profiles.xml \
-    device/asus/grouper/media/media_codecs.xml:system/etc/media_codecs.xml
+    device/asus/grouper/media/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml \
+    device/asus/grouper/media/media_codecs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs.xml
 
 # Vendor blobs
 $(call inherit-product, vendor/asus/grouper/asus-vendor.mk)
 $(call inherit-product, vendor/broadcom/grouper/broadcom-vendor.mk)
 $(call inherit-product, vendor/invensense/grouper/invensense-vendor.mk)
+
