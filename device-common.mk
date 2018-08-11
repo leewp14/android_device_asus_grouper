@@ -66,6 +66,10 @@ PRODUCT_PACKAGES += \
     libgpsd-compat \
     libstlport
 
+PRODUCT_COPY_FILES += \
+    device/asus/grouper/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
+    device/asus/grouper/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf 
+
 # Wi-Fi
 PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service \
