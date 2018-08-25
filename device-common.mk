@@ -115,11 +115,11 @@ PRODUCT_COPY_FILES += \
     device/asus/grouper/audio/mixer_paths.xml:system/etc/mixer_paths.xml
 
 # NFC
-PRODUCT_PACKAGES += \
-    nfc.grouper \
-    libpn544_fw \
-    NfcNxp \
-    Tag
+#PRODUCT_PACKAGES += \
+#    nfc.grouper \
+#    libpn544_fw \
+#    NfcNxp \
+#    Tag
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \
