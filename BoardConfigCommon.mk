@@ -107,6 +107,6 @@ TARGET_KERNEL_SOURCE := kernel/asus/grouper
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 
 TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
-BOARD_SEPOLICY_DIRS += device/asus/grouper/sepolicy
+#BOARD_SEPOLICY_DIRS += device/asus/grouper/sepolicy
 
 TARGET_RELEASETOOLS_EXTENSIONS := device/asus/grouper
